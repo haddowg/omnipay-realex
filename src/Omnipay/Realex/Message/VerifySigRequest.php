@@ -11,7 +11,7 @@ use Omnipay\Common\Message\AbstractRequest;
  */
 class VerifySigRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-remote.cgi';
+    protected $endpoint = 'https://remote.globaliris.com/realmpi';
 
 
     /**
@@ -40,11 +40,13 @@ class VerifySigRequest extends RemoteAbstractRequest
          * MD contains our original data (encoded by us) and PaRes will be sent to the gateway.
          */
         $returnedData = $this->decodeMerchantData($this->httpRequest->request->get('MD', ''));
-
         $this->setTransactionId($returnedData['transactionId']);
         $this->setAmount($returnedData['amount']);
         $this->setCurrency($returnedData['currency']);
         $this->setCard(new CreditCard($returnedData));
+        $this->setAdditional($returnedData['additional']);
+        $this->setPayerRef($returnedData['payerref']);
+        $this->setCardRef($returnedData['cardref']);
 
         $paRes = $this->httpRequest->request->get('PaRes', '');
 
@@ -57,9 +59,9 @@ class VerifySigRequest extends RemoteAbstractRequest
         $cardNumber = $this->getCard()->getNumber();
         $secret = $this->getSecret();
         $tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
-        $sha1hash = sha1($tmp);
-        $tmp2 = "$sha1hash.$secret";
-        $sha1hash = sha1($tmp2);
+        $md5hash = md5($tmp);
+        $tmp2 = "$md5hash.$secret";
+        $md5hash = md5($tmp2);
 
         $domTree = new \DOMDocument('1.0', 'UTF-8');
 
@@ -111,8 +113,8 @@ class VerifySigRequest extends RemoteAbstractRequest
         $paResEl = $domTree->createElement('pares', $paRes);
         $root->appendChild($paResEl);
 
-        $sha1El = $domTree->createElement('sha1hash', $sha1hash);
-        $root->appendChild($sha1El);
+        $md5El = $domTree->createElement('md5hash', $md5hash);
+        $root->appendChild($md5El);
 
         $xmlString = $domTree->saveXML($root);
 

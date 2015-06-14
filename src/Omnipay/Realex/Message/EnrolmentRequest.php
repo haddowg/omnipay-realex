@@ -9,7 +9,7 @@ use Omnipay\Common\Exception\InvalidRequestException;
  */
 class EnrolmentRequest extends RemoteAbstractRequest
 {
-    protected $endpoint = 'https://epage.payandshop.com/epage-3dsecure.cgi';
+    protected $endpoint = 'https://remote.globaliris.com/realmpi';
 
     /**
      * Get the XML registration string to be sent to the gateway
@@ -29,9 +29,9 @@ class EnrolmentRequest extends RemoteAbstractRequest
         $cardNumber = $this->getCard()->getNumber();
         $secret = $this->getSecret();
         $tmp = "$timestamp.$merchantId.$orderId.$amount.$currency.$cardNumber";
-        $sha1hash = sha1($tmp);
-        $tmp2 = "$sha1hash.$secret";
-        $sha1hash = sha1($tmp2);
+        $md5hash = md5($tmp);
+        $tmp2 = "$md5hash.$secret";
+        $md5hash = md5($tmp2);
 
         $domTree = new \DOMDocument('1.0', 'UTF-8');
 
@@ -93,8 +93,8 @@ class EnrolmentRequest extends RemoteAbstractRequest
 
         $root->appendChild($cardEl);
 
-        $sha1El = $domTree->createElement('sha1hash', $sha1hash);
-        $root->appendChild($sha1El);
+        $md5El = $domTree->createElement('md5hash', $md5hash);
+        $root->appendChild($md5El);
 
         $xmlString = $domTree->saveXML($root);
 

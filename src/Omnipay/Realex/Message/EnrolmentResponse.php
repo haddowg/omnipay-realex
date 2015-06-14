@@ -51,7 +51,7 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
 
     public function getRedirectUrl()
     {
-        return (string)$this->xml->url;
+        return $this->xml->url;
     }
 
     public function getRedirectMethod()
@@ -74,14 +74,12 @@ class EnrolmentResponse extends RemoteAbstractResponse implements RedirectRespon
             'transactionId' => $this->request->getTransactionId(),
             'currency'             => $this->request->getCurrency(),
             'amount'               => $this->request->getAmount(),
-            'number'               => $card->getNumber(),
-            'expiryMonth'          => $card->getExpiryMonth(),
-            'expiryYear'           => $card->getExpiryYear(),
-            'billingName'          => $card->getBillingName(),
-            'cvv'                  => $card->getCvv(),
-            'issueNumber'          => $card->getIssueNumber(),
-            'billingCountry'       => $card->getBillingCountry()
+            'additional'           => $this->request->getAdditional(),
+            'payerref'             => $this->request->getPayerRef(),
+            'cardref'              => $this->request->getCardRef()
         );
+        $data = array_merge($data,$card->getParameters());
+
         $serialised = json_encode($data);
         $encoded = base64_encode($serialised);
 

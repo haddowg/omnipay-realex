@@ -96,6 +96,18 @@ class RemoteGateway extends AbstractGateway
         }
     }
 
+    public function setup_payer(array $parameters = array())
+    {
+
+        return $this->createRequest('\Omnipay\Realex\Message\PayerNewRequest', $parameters);
+
+    }
+
+    public function payer_purchase(array $parameters = array())
+    {
+        return $this->createRequest('\Omnipay\Realex\Message\PayerPurchaseRequest', $parameters);
+    }
+
     /**
      * This will always be called as the result of returning from 3D Secure.
      * Verify that the 3D Secure message we've received is legit
@@ -109,7 +121,7 @@ class RemoteGateway extends AbstractGateway
     {
         return $this->createRequest('\Omnipay\Realex\Message\RefundRequest', $parameters);
     }
-    
+
     public function void(array $parameters = array())
     {
         return $this->createRequest('\Omnipay\Realex\Message\VoidRequest', $parameters);

@@ -15,6 +15,24 @@ abstract class RemoteAbstractResponse extends AbstractResponse implements Redire
 {
     protected $xml;
 
+    protected $trigger;
+
+    /**
+     * @return mixed
+     */
+    public function getTrigger()
+    {
+        return $this->trigger;
+    }
+
+    /**
+     * @param mixed $trigger
+     */
+    public function setTrigger($trigger)
+    {
+        $this->trigger = $trigger;
+    }
+
     public function __construct(RequestInterface $request, $data)
     {
         parent::__construct($request, $data);
